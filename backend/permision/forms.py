@@ -39,3 +39,30 @@ class RegisterFormJKArman(UserCreationForm):
             user.groups.add(group)
         
         return user
+    
+    
+class RegisterFormChoice(UserCreationForm):
+    
+    role = forms.ChoiceField(
+        choices=[
+            ('Student', 'Student'),
+            ('Teacher', 'Teacher')
+        ]
+    )
+    class Meta:
+        model = User
+        fields = ['username', 'password1', 'password2']
+        
+    def save(self, commit=True):
+            
+            user = super().save(commit=commit)
+            
+            if commit:
+                role = self.cleaned_data['role']
+                group, created = Group.objects.get_or_create(
+                    name=role
+                )
+                
+                user.groups.add(group)
+            
+            return user
